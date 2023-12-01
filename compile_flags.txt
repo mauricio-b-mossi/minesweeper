@@ -1,2 +1,2 @@
 -I
-C:/SFML/include
+C:/SFMLmingw6.1.0/include
