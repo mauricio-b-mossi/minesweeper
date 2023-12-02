@@ -7,13 +7,7 @@
 
 Welcome::Welcome(GameDataRef gameDataRef) : mData(gameDataRef){};
 
-void Welcome::Init() {
-  circle.setRadius(100.f);
-  circle.setFillColor(sf::Color::Blue);
-  circle.setPosition(
-      sf::Vector2f(mData->mWindow.getSize().x / 2.f - circle.getRadius(),
-                   mData->mWindow.getSize().x / 2.f - circle.getRadius()));
-}
+void Welcome::Init() {}
 
 void Welcome::ProcessEvent() {
   sf::Event ev;
@@ -28,20 +22,9 @@ void Welcome::ProcessEvent() {
 }
 
 void Welcome::Update() {
-  if (circle.getPosition().x < 0 ||
-      circle.getPosition().x > mData->mWindow.getSize().x)
-    dx *= -1;
-  if (circle.getPosition().y < 0 ||
-      circle.getPosition().y > mData->mWindow.getSize().y)
-    dy *= -1;
-
-  circle.move(sf::Vector2f(dx, dy));
 }
 
 void Welcome::Draw() {
-  mData->mWindow.clear();
-  mData->mWindow.draw(circle);
-  mData->mWindow.display();
 }
 
 void Welcome::Pause() {}

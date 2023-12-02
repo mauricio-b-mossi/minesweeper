@@ -26,6 +26,8 @@ Game::Game(){
 
     mData->mWindow.create(sf::VideoMode(SQUARE * cols, SQUARE * rows + 100), TITLE);
 
+    mData->mAssetManager.LoadFont("font", FONT_PATH);
+
     mData->mStateManager.PushState(StateRef(new Welcome(mData)), false);
 
     Run();

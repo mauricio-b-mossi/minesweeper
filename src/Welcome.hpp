@@ -16,8 +16,6 @@ public:
   void Resume() override;
 
 private:
-  sf::CircleShape circle;
   GameDataRef mData;
-  int dx = 1;
-  int dy = 1;
+  std::string mPlayer;
 };
