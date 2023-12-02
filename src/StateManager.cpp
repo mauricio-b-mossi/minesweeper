@@ -8,7 +8,9 @@ void StateManager::ProcessStateChanges() {
     mIsReplacing = false;
     mIsAdding = false;
   } else if (mIsAdding) {
-    mStack.top()->Pause();
+    if (!mStack.empty()) {
+      mStack.top()->Pause();
+    }
     mStack.push(std::move(mBuffState));
     mStack.top()->Init();
     mIsAdding = false;
@@ -23,6 +25,7 @@ StateRef &StateManager::GetCurrentState() { return mStack.top(); }
 
 void StateManager::PushState(StateRef stateRef, bool isReplacing) {
   mBuffState = std::move(stateRef);
+  mIsAdding = true;
   mIsReplacing = isReplacing;
 }
 

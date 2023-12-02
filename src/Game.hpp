@@ -8,8 +8,8 @@
 struct GameData {
   // AssetManager and StateManager and StateGlobals.
 public:
-  StateManager stateManager;
-  AssetManager AssetManager;
+  StateManager mStateManager;
+  AssetManager mAssetManager;
   sf::RenderWindow mWindow;
 };
 
@@ -21,5 +21,5 @@ public:
   void Run();
 
 private:
-  GameDataRef _data = std::make_shared<GameData>();
+  GameDataRef mData = std::make_shared<GameData>();
 };

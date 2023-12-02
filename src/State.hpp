@@ -1,6 +1,8 @@
 #pragma once
 
 struct State{
+    virtual ~State(){};
+
     virtual void Init() = 0;
 
     virtual void ProcessEvent() = 0;
