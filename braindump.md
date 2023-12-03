@@ -11,13 +11,14 @@ of `n` mines. With these numbers fill `arr` with `true` is is mine.
 `arr` is just a representation that will be used later to build up the UI.
 
 ### Filling up indexes of neighbours.
-Only items living in borders will have less 8 neighbours, corners have 3 neighbour, and margins have 5. To determine if 
-item is on top or bottom `idx < cols || idx > (cols * rows - 1) - cols` and the item is on the left or right if 
-`idx % cols == 0 || idx % cols == (cols - 1)`. If item satisfies both conditions it is a corner, if it satisfies just 
-one it is an edge, if it satisfies none it has 8 neighbours.
+Only items living in borders will have less 8 neighbours, corners have 3 neighbour, and margins have 5.
+To determine if item is on top or bottom `idx < cols || idx > (cols * rows - 1) - cols` and the item is
+on the left or right if `idx % cols == 0 || idx % cols == (cols - 1)`. If item satisfies both conditions 
+it is a corner, if it satisfies just one it is an edge, if it satisfies none it has 8 neighbours.
 
 For 8 neighbours finding the indexes of neighbours is easy.
-Just `idx + 1, idx + - 1, idx + (cols), idx + (cols + 1), idx + (cols - 1), idx + (-cols), idx + (-cols + 1), idx + (-cols - 1)`
+Just `idx + 1, idx + - 1, idx + (cols), idx + (cols + 1), idx + (cols - 1), idx + (-cols),
+idx + (-cols + 1), idx + (-cols - 1)`
 
 For top skip the `(-cols)`
 For bottom skip the `(cols)`
@@ -28,10 +29,12 @@ There should be an algorithm I could build with these considerations. Could use 
 In the for loop first check for `top` `bottom`, then in the inner loop check for `left` `right`
 
 ### Need a away to find neighbour bombs.
-After construction query the array for each of the neighbours index and increment the number of neighbour bombs. If 
-the item itself is a bomb, set `neighbourBombs` to `-1`. Else fill in form `0-8`.
+After construction query the array for each of the neighbours index and increment the number of neighbour
+bombs. If the item itself is a bomb, set `neighbourBombs` to `-1`. Else fill in form `0-8`.
 
-If a `0` neighbour bomb or empty is clicked, open all neighbour and if one of those neighbour also is `0` open it up.
+If a `0` neighbour bomb or empty is clicked, open all neighbour and if one of those neighbour also is 
+`0` open it up.
 
-> Important distinction I will have a game board `arr` and a `vector<Cell>` as game state. `bool[cols * rows] arr` just 
-> indicates whether spot is bomb or non bomb. `vector<Cell>` it the actual game state, will be used to render, open, etc.
+> Important distinction I will have a game board `arr` and a `vector<Cell>` as game state. `bool[cols * rows] 
+> arr` just indicates whether spot is bomb or non bomb. `vector<Cell>` it the actual game state, will be 
+> used to render, open, etc.
