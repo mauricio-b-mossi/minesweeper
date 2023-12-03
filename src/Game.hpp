@@ -4,10 +4,12 @@
 #include "StateManager.hpp"
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include "GameGlobals.hpp"
 
 struct GameData {
   // AssetManager and StateManager and StateGlobals.
 public:
+  GameGlobals mGameGlobals;
   StateManager mStateManager;
   AssetManager mAssetManager;
   sf::RenderWindow mWindow;

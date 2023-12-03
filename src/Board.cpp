@@ -16,16 +16,16 @@ Board::Board(int cols, int rows, int mines, int clickedCol, int clickedRow)
     RIGHT = (1 << 3)
   };
   // -1 to get relative ot array.
-  int clickedIdx = (((clickedRow - 1) * cols) + clickedCol) - 1;
+  int clickedIdx = (((clickedRow - 1) * mCols) + clickedCol) - 1;
 
-  // bool backingBoard[rows * cols];
+  // bool backingBoard[mRows * mCols];
   //  Initializing board to false.
-  for (int i = 0; i < (rows * cols); i++) {
+  for (int i = 0; i < (mRows * mCols); i++) {
     mBackingBoard[i] = false;
   }
 
   std::vector<int> shuffler;
-  shuffler.reserve(rows * cols);
+  shuffler.reserve(mRows * mCols);
 
   // Populating shuffler.
   for (int i = 0; i < shuffler.size(); i++) {
@@ -50,76 +50,204 @@ Board::Board(int cols, int rows, int mines, int clickedCol, int clickedRow)
   }
 
   // Filled backingBoard, construct mBoard.
-  mBoard->reserve(rows * cols);
+  mBoard->reserve(mRows * mCols);
 
-  for (int idx = 0; idx < (rows * cols); idx++) {
+  for (int idx = 0; idx < (mRows * mCols); idx++) {
     int positionAccumulator = 0;
 
-    if (idx < cols)
+    if (idx < mCols)
       positionAccumulator |= Position::TOP;
-    if (idx > (cols * rows - 1) - cols)
+    if (idx > (mCols * mRows - 1) - mCols)
       positionAccumulator |= Position::BOTTOM;
-    if (idx % cols == cols - 1)
+    if (idx % mCols == mCols - 1)
       positionAccumulator |= Position::RIGHT;
-    if (idx % cols == 0)
+    if (idx % mCols == 0)
       positionAccumulator |= Position::LEFT;
 
     // Flags set.
     if (positionAccumulator == (Position::TOP | Position::RIGHT)) {
-      int neighborIndices[3] = {idx - 1, idx + cols, idx + cols - 1};
+      int neighborIndices[3] = {idx - 1, idx + mCols, idx + mCols - 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
     } else if (positionAccumulator == (Position::TOP | Position::LEFT)) {
-      int neighborIndices[3] = {idx + 1, idx + cols, idx + cols + 1};
+      int neighborIndices[3] = {idx + 1, idx + mCols, idx + mCols + 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
     } else if (positionAccumulator == (Position::BOTTOM | Position::LEFT)) {
-      int neighborIndices[3] = {idx + 1, idx - cols, idx - cols + 1};
+      int neighborIndices[3] = {idx + 1, idx - mCols, idx - mCols + 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
     } else if (positionAccumulator == (Position::BOTTOM | Position::RIGHT)) {
-      int neighborIndices[3] = {idx - 1, idx - cols, idx - cols - 1};
+      int neighborIndices[3] = {idx - 1, idx - mCols, idx - mCols - 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
 
     } else if (positionAccumulator == (Position::BOTTOM)) {
 
-      int neighborIndices[5] = {idx - 1, idx + 1, idx - cols, idx - cols + 1,
-                                idx - cols - 1};
+      int neighborIndices[5] = {idx - 1, idx + 1, idx - mCols, idx - mCols + 1,
+                                idx - mCols - 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
 
     } else if (positionAccumulator == (Position::TOP)) {
-      int neighborIndices[5] = {idx - 1, idx + 1, idx + cols, idx + cols + 1,
-                                idx + cols - 1};
+      int neighborIndices[5] = {idx - 1, idx + 1, idx + mCols, idx + mCols + 1,
+                                idx + mCols - 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
 
     } else if (positionAccumulator == (Position::RIGHT)) {
-      int neighborIndices[5] = {idx - 1, idx + cols, idx + cols - 1, idx - cols,
-                                idx - cols - 1};
+      int neighborIndices[5] = {idx - 1, idx + mCols, idx + mCols - 1,
+                                idx - mCols, idx - mCols - 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
 
     } else if (positionAccumulator == (Position::LEFT)) {
-      int neighborIndices[5] = {idx + 1, idx + cols, idx + cols + 1, idx - cols,
-                                idx - cols + 1};
+      int neighborIndices[5] = {idx + 1, idx + mCols, idx + mCols + 1,
+                                idx - mCols, idx - mCols + 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));
 
     } else {
       // Need to build neighborbombs and cells.
-      int neighborIndices[8] = {idx + 1,        idx - 1,        idx + cols,
-                                idx + cols + 1, idx + cols - 1, idx - cols,
-                                idx - cols + 1, idx - cols - 1};
+      int neighborIndices[8] = {idx + 1,         idx - 1,         idx + mCols,
+                                idx + mCols + 1, idx + mCols - 1, idx - mCols,
+                                idx - mCols + 1, idx - mCols - 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+    }
+  }
+
+  // Opening clicked mine.
+  mBoard->at(clickedIdx).mIsOpen = true;
+}
+
+// Just fill all with default closed. Cannot fill mines. Just set default for
+// init. Set condition to add squares if mBoard.size() == 0;
+Board::Board(int cols, int rows, int mines)
+    : mCols(cols), mRows(rows), mMines(mines),
+      mBackingBoard(new bool[rows * cols]) {}
+
+void Board::Init(int clickedCol, int clickedRow) {
+  enum Position {
+    TOP = (1 << 0),
+    BOTTOM = (1 << 1),
+    LEFT = (1 << 2),
+    RIGHT = (1 << 3)
+  };
+  // -1 to get relative ot array.
+  int clickedIdx = (((clickedRow - 1) * mCols) + clickedCol) - 1;
+
+  // bool backingBoard[mRows * mCols];
+  //  Initializing board to false.
+  for (int i = 0; i < (mRows * mCols); i++) {
+    mBackingBoard[i] = false;
+  }
+
+  std::vector<int> shuffler;
+  shuffler.reserve(mRows * mCols);
+
+  // Populating shuffler.
+  for (int i = 0; i < shuffler.size(); i++) {
+    shuffler.push_back(i);
+  }
+
+  // obtain a time-based seed:
+  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+  std::default_random_engine e(seed);
+
+  std::shuffle(shuffler.begin(), shuffler.end(), e);
+
+  int counter = 0;
+
+  while (counter < mMines) {
+    if (shuffler.back() != clickedIdx) {
+      mBackingBoard[shuffler.back()] = true;
+      shuffler.pop_back();
+      counter++;
+    } else
+      shuffler.pop_back();
+  }
+
+  // Filled backingBoard, construct mBoard.
+  mBoard->reserve(mRows * mCols);
+
+  for (int idx = 0; idx < (mRows * mCols); idx++) {
+    int positionAccumulator = 0;
+
+    if (idx < mCols)
+      positionAccumulator |= Position::TOP;
+    if (idx > (mCols * mRows - 1) - mCols)
+      positionAccumulator |= Position::BOTTOM;
+    if (idx % mCols == mCols - 1)
+      positionAccumulator |= Position::RIGHT;
+    if (idx % mCols == 0)
+      positionAccumulator |= Position::LEFT;
+
+    // Flags set.
+    if (positionAccumulator == (Position::TOP | Position::RIGHT)) {
+      int neighborIndices[3] = {idx - 1, idx + mCols, idx + mCols - 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+    } else if (positionAccumulator == (Position::TOP | Position::LEFT)) {
+      int neighborIndices[3] = {idx + 1, idx + mCols, idx + mCols + 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+    } else if (positionAccumulator == (Position::BOTTOM | Position::LEFT)) {
+      int neighborIndices[3] = {idx + 1, idx - mCols, idx - mCols + 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+    } else if (positionAccumulator == (Position::BOTTOM | Position::RIGHT)) {
+      int neighborIndices[3] = {idx - 1, idx - mCols, idx - mCols - 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+
+    } else if (positionAccumulator == (Position::BOTTOM)) {
+
+      int neighborIndices[5] = {idx - 1, idx + 1, idx - mCols, idx - mCols + 1,
+                                idx - mCols - 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+
+    } else if (positionAccumulator == (Position::TOP)) {
+      int neighborIndices[5] = {idx - 1, idx + 1, idx + mCols, idx + mCols + 1,
+                                idx + mCols - 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+
+    } else if (positionAccumulator == (Position::RIGHT)) {
+      int neighborIndices[5] = {idx - 1, idx + mCols, idx + mCols - 1,
+                                idx - mCols, idx - mCols - 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+
+    } else if (positionAccumulator == (Position::LEFT)) {
+      int neighborIndices[5] = {idx + 1, idx + mCols, idx + mCols + 1,
+                                idx - mCols, idx - mCols + 1};
+
+      PushCellsToBoard(idx, neighborIndices,
+                       sizeof(neighborIndices) / sizeof(neighborIndices[0]));
+
+    } else {
+      // Need to build neighborbombs and cells.
+      int neighborIndices[8] = {idx + 1,         idx - 1,         idx + mCols,
+                                idx + mCols + 1, idx + mCols - 1, idx - mCols,
+                                idx - mCols + 1, idx - mCols - 1};
 
       PushCellsToBoard(idx, neighborIndices,
                        sizeof(neighborIndices) / sizeof(neighborIndices[0]));

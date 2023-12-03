@@ -4,6 +4,7 @@
 #include "State.hpp"
 #include "Constants.hpp"
 #include <vector>
+#include "Board.hpp"
 
 class GameScreen : public State {
 public:
@@ -21,6 +22,8 @@ public:
 
 private:
   GameDataRef mData;
+  bool mGameStarted = false;
   sf::Text mPname;
   std::string mPlayerName;
+  Board mBoard;
 };

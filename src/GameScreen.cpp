@@ -13,7 +13,10 @@
 #include <memory>
 #include <vector>
 
-GameScreen::GameScreen(GameDataRef gameDataRef) : mData(gameDataRef){};
+GameScreen::GameScreen(GameDataRef gameDataRef)
+    : mData(gameDataRef),
+      mBoard(mData->mGameGlobals.mCols, mData->mGameGlobals.mRows,
+             mData->mGameGlobals.mMines){};
 
 void GameScreen::Init(){};
 
@@ -27,13 +30,13 @@ void GameScreen::Init(ExtrasRef extrasRef) {
   }
 };
 
-void GameScreen::ProcessEvent(){
-    sf::Event ev;
-    while(mData->mWindow.pollEvent(ev)){
-        if(ev.type == sf::Event::Closed){
-            mData->mWindow.close();
-        }
+void GameScreen::ProcessEvent() {
+  sf::Event ev;
+  while (mData->mWindow.pollEvent(ev)) {
+    if (ev.type == sf::Event::Closed) {
+      mData->mWindow.close();
     }
+  }
 };
 
 void GameScreen::Update(){};
