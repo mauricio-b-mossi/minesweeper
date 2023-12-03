@@ -1,22 +1,22 @@
-
+#include <memory>
 #include <vector>
 
-struct Cell {
-  Cell();
-  // Recursively searches for number of neighborsBombs.
-  void FindNeighborBombs();
-  // Return true is succedes, False if Bomb.
-  bool Open();
-  bool mIsMine;
-  // Used with open to open neighbors if empty and also to find
-  // number of neighbors.
-  std::vector<int> neighbors;
-  // -1 if is bomb else 1-8.
-  int neighborBombs;
-  // Necessary to fill neighbors.
-  int idx;
+typedef std::unique_ptr<std::vector<int>> NeighborCellsRef;
 
-  // Flags for drawing.
+struct Cell {
+
+  // Board and opened cells are just for recursion purposes.
+  Cell(int idx, bool isMine, bool isOpen, int neighborBombs,
+       std::vector<int> NeighborCells, int *openedCells,
+       std::vector<Cell> *board);
+  // Usefull for drawing.
+
+  int *mOpenedCells;
+  std::vector<Cell> *mBoard;
+  std::vector<int> mNeighborCellsIndices;
+  int mNeighborBombs;
+  int mIdx;
+  bool mIsMine;
   bool mIsOpen;
   bool mIsMarked;
 };
