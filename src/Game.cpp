@@ -5,13 +5,14 @@
 #include "Game.hpp"
 #include "Constants.hpp"
 #include "Constants.hpp"
-#include "Welcome.hpp"
+#include "WelcomeScreen.hpp"
 
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/VideoMode.hpp"
 
 // Perform initialization, load fonts, read files, etc.
 Game::Game(){
+
     // Read Data set window size.
     std::ifstream f(CONFIG_PATH);
     std::string temp;
@@ -26,9 +27,11 @@ Game::Game(){
 
     mData->mWindow.create(sf::VideoMode(SQUARE * cols, SQUARE * rows + 100), TITLE);
 
+
+    // Loading Font.
     mData->mAssetManager.LoadFont("font", FONT_PATH);
 
-    mData->mStateManager.PushState(StateRef(new Welcome(mData)), false);
+    mData->mStateManager.PushState(StateRef(new WelcomeScreen(mData)), false);
 
     Run();
 }

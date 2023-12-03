@@ -1,12 +1,16 @@
 #include "Game.hpp"
 #include "SFML/Graphics/CircleShape.hpp"
+#include "SFML/Graphics/Text.hpp"
 #include "State.hpp"
+#include "Constants.hpp"
+#include <vector>
 
-class Welcome : public State {
+class GameScreen : public State {
 public:
-  Welcome(GameDataRef gameDataRef);
+  GameScreen(GameDataRef gameDataRef);
 
   void Init() override;
+  void Init(ExtrasRef extrasRef) override;
 
   void ProcessEvent() override;
   void Update() override;
@@ -17,5 +21,6 @@ public:
 
 private:
   GameDataRef mData;
-  std::string mPlayer;
+  sf::Text mPname;
+  std::string mPlayerName;
 };
