@@ -1,6 +1,8 @@
 #include "Game.hpp"
 #include "SFML/Graphics/CircleShape.hpp"
+#include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Text.hpp"
+#include "SFML/Graphics/Texture.hpp"
 #include "State.hpp"
 #include "Constants.hpp"
 #include <vector>
@@ -23,6 +25,7 @@ public:
 private:
   GameDataRef mData;
   bool mGameStarted = false;
+  sf::Sprite mDefaultTile;
   sf::Text mPname;
   std::string mPlayerName;
   Board mBoard;

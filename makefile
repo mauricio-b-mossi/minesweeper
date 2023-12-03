@@ -1,5 +1,12 @@
-run: link
+run: exec
 	./sfml-app.exe
+
+exec: build
+	g++ out/*.o -o sfml-app -LC:/SFMLmingw6.1.0/lib -lsfml-graphics -lsfml-window -lsfml-system
+
+build:
+	g++ -c src/*.cpp -IC:/SFMLmingw6.1.0/include
+
 
 link: out/main.o out/AssetManager.o out/Game.o out/StateManager.o out/WelcomeScreen.o out/GameScreen.o out/Board.o out/Cell.o
 	g++ out/main.o out/AssetManager.o out/Game.o out/StateManager.o out/WelcomeScreen.o out/GameScreen.o out/Board.o out/Cell.o -o sfml-app -LC:/SFMLmingw6.1.0/lib -lsfml-graphics -lsfml-window -lsfml-system
