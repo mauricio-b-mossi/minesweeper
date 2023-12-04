@@ -28,6 +28,7 @@ private:
   void DrawOnlyMine();
   void DrawRevealedBoard();
   void DrawControls();
+  void DrawBoardState();
   int GetIndex(int col, int row);
 
   enum ControlState { WON = 1, PAUSED = 2 };

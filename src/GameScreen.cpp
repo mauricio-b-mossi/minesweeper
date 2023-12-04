@@ -103,6 +103,8 @@ void GameScreen::Draw() {
   } else {
     if (mIsDebugging) {
       DrawOnlyMine();
+    } else {
+        DrawBoardState();
     }
   }
   DrawControls();
@@ -116,6 +118,72 @@ void GameScreen::DrawAllTiles(std::string texture) {
       tile_hidden.setTexture(mData->mAssetManager.GetTexture(texture));
       tile_hidden.setPosition(col * SQUARE, row * SQUARE);
       mData->mWindow.draw(tile_hidden);
+    }
+  }
+}
+
+void GameScreen::DrawBoardState() {
+  for (int col = 0; col < mData->mGameGlobals.mCols; col++) {
+    for (int row = 0; row < mData->mGameGlobals.mRows; row++) {
+
+      if (mBoard.mBoard->at(GetIndex(col, row)).mIsOpen) {
+        sf::Sprite tile_revealed;
+
+        tile_revealed.setTexture(
+            mData->mAssetManager.GetTexture("tile_revealed"));
+        tile_revealed.setPosition(col * SQUARE, row * SQUARE);
+        mData->mWindow.draw(tile_revealed);
+
+        if (mBoard.mBoard->at(GetIndex(col, row)).mIsMine) {
+          sf::Sprite mine;
+          mine.setTexture(mData->mAssetManager.GetTexture("mine"));
+          mine.setPosition(col * SQUARE, row * SQUARE);
+          mData->mWindow.draw(mine);
+
+        } else if (mBoard.mBoard->at(GetIndex(col, row)).mNeighborBombs != 0) {
+          sf::Sprite number;
+          switch (mBoard.mBoard->at(GetIndex(col, row)).mNeighborBombs) {
+          case 1:
+            number.setTexture(mData->mAssetManager.GetTexture("number_1"));
+            break;
+          case 2:
+            number.setTexture(mData->mAssetManager.GetTexture("number_2"));
+            break;
+          case 3:
+            number.setTexture(mData->mAssetManager.GetTexture("number_3"));
+            break;
+          case 4:
+            number.setTexture(mData->mAssetManager.GetTexture("number_4"));
+            break;
+          case 5:
+            number.setTexture(mData->mAssetManager.GetTexture("number_5"));
+            break;
+          case 6:
+            number.setTexture(mData->mAssetManager.GetTexture("number_6"));
+            break;
+          case 7:
+            number.setTexture(mData->mAssetManager.GetTexture("number_7"));
+            break;
+          case 8:
+            number.setTexture(mData->mAssetManager.GetTexture("number_8"));
+            break;
+          }
+          number.setPosition(col * SQUARE, row * SQUARE);
+          mData->mWindow.draw(number);
+        }
+      } else {
+        sf::Sprite tile_hidden;
+        tile_hidden.setTexture(mData->mAssetManager.GetTexture("tile_hidden"));
+        tile_hidden.setPosition(col * SQUARE, row * SQUARE);
+        mData->mWindow.draw(tile_hidden);
+
+        if (mBoard.mBoard->at(GetIndex(col, row)).mIsMarked) {
+          sf::Sprite flag;
+          flag.setTexture(mData->mAssetManager.GetTexture("flag"));
+          flag.setPosition(col * SQUARE, row * SQUARE);
+          mData->mWindow.draw(flag);
+        }
+      }
     }
   }
 }
@@ -213,14 +281,10 @@ void GameScreen::DrawControls() {
 
   debug.setPosition(mXposDebug, mYposDebug);
 
-
-
   mData->mWindow.draw(face);
   mData->mWindow.draw(play_pause);
   mData->mWindow.draw(debug);
   mData->mWindow.draw(mLeaderboard);
-
-  // Conditionals to determine face.
 }
 
 void GameScreen::Pause(){};
