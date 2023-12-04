@@ -57,29 +57,29 @@ void WelcomeScreen::Init() {
 void WelcomeScreen::Init(ExtrasRef extrasRef) { Init(); };
 
 void WelcomeScreen::ProcessEvent() {
-  sf::Event ev;
+  sf::Event event;
 
-  while (mData->mWindow.pollEvent(ev)) {
-    if (ev.type == sf::Event::Closed) {
+  while (mData->mWindow.pollEvent(event)) {
+    if (event.type == sf::Event::Closed) {
       mData->mWindow.close();
     } else {
-      if (ev.type == sf::Event::TextEntered) {
+      if (event.type == sf::Event::TextEntered) {
 
-        if (ev.text.unicode > 64 && ev.text.unicode < 91 ||
-            ev.text.unicode > 96 && ev.text.unicode < 123) {
-          std::cout << static_cast<char>(ev.text.unicode) << ": "
-                    << ev.text.unicode << std::endl;
+        if (event.text.unicode > 64 && event.text.unicode < 91 ||
+            event.text.unicode > 96 && event.text.unicode < 123) {
+          std::cout << static_cast<char>(event.text.unicode) << ": "
+                    << event.text.unicode << std::endl;
           if (mPlayerName.length() < 10) {
             if (mPlayerName.length() == 0) {
-              mPlayerName.push_back(toupper(ev.text.unicode));
+              mPlayerName.push_back(toupper(event.text.unicode));
             } else
-              mPlayerName.push_back(tolower(ev.text.unicode));
+              mPlayerName.push_back(tolower(event.text.unicode));
           }
-        } else if (ev.text.unicode == 8) {
+        } else if (event.text.unicode == 8) {
           std::cout << "BackSpace" << std::endl;
           if (mPlayerName.length() > 0)
             mPlayerName.pop_back();
-        } else if (ev.text.unicode == 13) {
+        } else if (event.text.unicode == 13) {
           std::cout << "CR" << std::endl;
           if (mPlayerName.length() > 0) {
             ExtrasRef extras(new std::vector<std::string>);

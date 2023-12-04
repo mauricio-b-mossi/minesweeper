@@ -6,6 +6,7 @@
 #include <random>
 #include <vector>
 
+// ClickedCol and ClickedRow are zero indexed based on the handling.
 Board::Board(int cols, int rows, int mines, int clickedCol, int clickedRow)
     : mCols(cols), mRows(rows), mMines(mines),
       mBackingBoard(new bool[rows * cols]) {
@@ -16,7 +17,8 @@ Board::Board(int cols, int rows, int mines, int clickedCol, int clickedRow)
     RIGHT = (1 << 3)
   };
   // -1 to get relative ot array.
-  int clickedIdx = (((clickedRow - 1) * mCols) + clickedCol) - 1;
+  // int clickedIdx = (((clickedRow - 1) * mCols) + clickedCol) - 1;
+  int clickedIdx = (clickedRow * mCols) + clickedCol;
 
   // bool backingBoard[mRows * mCols];
   //  Initializing board to false.
@@ -143,8 +145,8 @@ void Board::Init(int clickedCol, int clickedRow) {
     LEFT = (1 << 2),
     RIGHT = (1 << 3)
   };
-  // -1 to get relative ot array.
-  int clickedIdx = (((clickedRow - 1) * mCols) + clickedCol) - 1;
+
+  int clickedIdx = (clickedRow * mCols) + clickedCol;
 
   // bool backingBoard[mRows * mCols];
   //  Initializing board to false.
@@ -152,33 +154,58 @@ void Board::Init(int clickedCol, int clickedRow) {
     mBackingBoard[i] = false;
   }
 
+  std::cout << "backingBoard built" << std::endl;
+
   std::vector<int> shuffler;
   shuffler.reserve(mRows * mCols);
 
+  std::cout << "shuffler built" << std::endl;
+
   // Populating shuffler.
-  for (int i = 0; i < shuffler.size(); i++) {
+  for (int i = 0; i < (mRows * mCols); i++) {
     shuffler.push_back(i);
+    std::cout << shuffler.back() << std::endl;
   }
+
+  std::cout << "shuffler size: " << shuffler.size() << std::endl;
+  std::cout << "shuffler filled" << std::endl;
 
   // obtain a time-based seed:
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine e(seed);
 
+  std::cout << "time seeded" << std::endl;
+
   std::shuffle(shuffler.begin(), shuffler.end(), e);
+
+  std::cout << "shuffler shuffled" << std::endl;
 
   int counter = 0;
 
   while (counter < mMines) {
+
+    std::cout << "counter: " << counter << std::endl;
+    std::cout << "shuffler size: " << shuffler.size() << std::endl;
+    std::cout << "shuffler first: " << shuffler.front() << std::endl;
+    std::cout << "shuffler last: " << shuffler.back() << std::endl;
+
     if (shuffler.back() != clickedIdx) {
+      std::cout << "filled mBacking with: " << shuffler.back() << std::endl;
       mBackingBoard[shuffler.back()] = true;
       shuffler.pop_back();
       counter++;
-    } else
+    } else {
+      std::cout << "discarded: " << shuffler.back() << std::endl;
       shuffler.pop_back();
+    }
   }
+
+  std::cout << "mines built" << std::endl;
 
   // Filled backingBoard, construct mBoard.
   mBoard->reserve(mRows * mCols);
+
+  std::cout << "mBoard reserve" << std::endl;
 
   for (int idx = 0; idx < (mRows * mCols); idx++) {
     int positionAccumulator = 0;
