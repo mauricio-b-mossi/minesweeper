@@ -28,10 +28,8 @@ void StateManager::ProcessStateChanges() {
         mStack.push(std::move(mBuffState));
 
         if (mExtrasRef) {
-          std::cout << "Extras init" << std::endl;
           mStack.top()->Init(std::move(mExtrasRef));
         } else {
-          std::cout << "NO Extras init" << std::endl;
           mStack.top()->Init();
         }
 

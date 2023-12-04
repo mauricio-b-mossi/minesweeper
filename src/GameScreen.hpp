@@ -25,6 +25,9 @@ public:
 private:
   void SetAllSprites();
   void DrawAllTiles(std::string texture);
+  void DrawOnlyMine();
+  void DrawRevealedBoard();
+  int GetIndex(int col, int row);
 
 private:
   GameDataRef mData;
