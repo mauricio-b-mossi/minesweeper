@@ -64,7 +64,7 @@ void GameScreen::ProcessEvent() {
               event.mouseButton.y < mYactionRow + 64) {
             std::cout << "Clicked Action Row" << std::endl;
             if (event.mouseButton.x > mXposFace &&
-                event.mouseButton.x < mXposFace + 64) {
+                event.mouseButton.x < mXposFace + 64 && !IsPaused()) {
               mBoard.Erase();
               mBoard.mHasLost = false;
             } else if (event.mouseButton.x > mXposPlayPause &&
@@ -73,7 +73,7 @@ void GameScreen::ProcessEvent() {
             } else if (event.mouseButton.x > mXposLeaderboard &&
                        event.mouseButton.x < mXposLeaderboard + 64) {
             } else if (event.mouseButton.x > mXposDebug &&
-                       event.mouseButton.x < mXposDebug + 64) {
+                       event.mouseButton.x < mXposDebug + 64 && !IsPaused()) {
               mIsDebugging = !mIsDebugging;
             }
           }
@@ -85,7 +85,7 @@ void GameScreen::ProcessEvent() {
           int idx = (row * mData->mGameGlobals.mCols) + col;
           std::cout << "Position: " << idx << std::endl;
 
-          if (!mBoard.mHasLost) {
+          if (!mBoard.mHasLost && !IsPaused()) {
             if (mBoard.mBoard->size() < 1) {
               std::cout << "INITIALIZING BOARD" << std::endl;
               mBoard.Init(col, row);
@@ -103,7 +103,7 @@ void GameScreen::ProcessEvent() {
         int row = event.mouseButton.y / 32;
 
         if (row < mData->mGameGlobals.mRows && mBoard.mBoard->size() > 0 &&
-            !mBoard.mHasLost) {
+            !mBoard.mHasLost && !IsPaused()) {
           mBoard.Flag(col, row);
         }
       }
@@ -118,7 +118,9 @@ void GameScreen::Draw() {
   if (mBoard.mBoard->size() < 1) {
     DrawAllTiles("tile_hidden");
   } else {
-    if (mIsDebugging) {
+    if (!mIsPlaying && mBoard.mBoard->size() > 0) {
+      DrawAllTiles("tile_revealed");
+    } else if (mIsDebugging) {
       DrawOnlyMine();
     } else {
       DrawBoardState();
@@ -315,3 +317,5 @@ void GameScreen::SetConstantSprites() {
   mLeaderboard.setTexture(mData->mAssetManager.GetTexture("leaderboard"));
   mLeaderboard.setPosition(mXposLeaderboard, mYposLeaderboard);
 };
+
+bool GameScreen::IsPaused() { return mBoard.mBoard->size() > 0 && !mIsPlaying; }
