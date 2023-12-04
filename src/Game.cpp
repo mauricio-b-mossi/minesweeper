@@ -4,7 +4,9 @@
 #include <string>
 
 #include "Constants.hpp"
+#include "StateManager.hpp"
 #include "WelcomeScreen.hpp"
+#include "GameScreen.hpp"
 
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/VideoMode.hpp"
@@ -12,24 +14,29 @@
 // Perform initialization, load fonts, read files, etc.
 Game::Game() {
 
-  // Read Data set window size.
-  std::ifstream f(CONFIG_PATH);
-  std::string temp;
-  std::getline(f, temp);
-  mData->mGameGlobals.mCols = std::stoi(temp);
-  std::getline(f, temp);
-  mData->mGameGlobals.mRows = std::stoi(temp);
-  std::getline(f, temp);
-  mData->mGameGlobals.mMines = std::stoi(temp);
-  f.close();
-  std::cout << "Cols: " << mData->mGameGlobals.mCols
-            << " Rows: " << mData->mGameGlobals.mRows
-            << " Mines: " << mData->mGameGlobals.mMines << std::endl;
+  LoadConfigurations();
 
   mData->mWindow.create(sf::VideoMode(SQUARE * mData->mGameGlobals.mCols,
                                       SQUARE * mData->mGameGlobals.mRows + 100),
                         TITLE);
 
+  LoadAssets();
+
+  mData->mStateManager.PushState(StateRef(new GameScreen(mData)), false);
+
+  Run();
+}
+
+void Game::Run() {
+  while (mData->mWindow.isOpen()) {
+    mData->mStateManager.ProcessStateChanges();
+    mData->mStateManager.GetCurrentState()->ProcessEvent();
+    mData->mStateManager.GetCurrentState()->Update();
+    mData->mStateManager.GetCurrentState()->Draw();
+  }
+}
+
+void Game::LoadAssets() {
   // Loading Font.
   mData->mAssetManager.LoadFont("font", FONT_PATH);
 
@@ -54,17 +61,20 @@ Game::Game() {
   mData->mAssetManager.LoadTexture("play", PLAY);
   mData->mAssetManager.LoadTexture("tile_hidden", TILE_HIDDEN);
   mData->mAssetManager.LoadTexture("tile_revealed", TILE_REVEALED);
-
-  mData->mStateManager.PushState(StateRef(new WelcomeScreen(mData)), false);
-
-  Run();
 }
 
-void Game::Run() {
-  while (mData->mWindow.isOpen()) {
-    mData->mStateManager.ProcessStateChanges();
-    mData->mStateManager.GetCurrentState()->ProcessEvent();
-    mData->mStateManager.GetCurrentState()->Update();
-    mData->mStateManager.GetCurrentState()->Draw();
-  }
+void Game::LoadConfigurations() {
+  // Read Data set window size.
+  std::ifstream f(CONFIG_PATH);
+  std::string temp;
+  std::getline(f, temp);
+  mData->mGameGlobals.mCols = std::stoi(temp);
+  std::getline(f, temp);
+  mData->mGameGlobals.mRows = std::stoi(temp);
+  std::getline(f, temp);
+  mData->mGameGlobals.mMines = std::stoi(temp);
+  f.close();
+  std::cout << "Cols: " << mData->mGameGlobals.mCols
+            << " Rows: " << mData->mGameGlobals.mRows
+            << " Mines: " << mData->mGameGlobals.mMines << std::endl;
 }

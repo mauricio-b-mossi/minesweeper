@@ -40,7 +40,9 @@ void GameScreen::ProcessEvent() {
 
         // Handle outside click.
         if ((row + 1) > mData->mGameGlobals.mRows) {
+
           std::cout << "Clicked outside" << std::endl;
+
         } else {
           // Handle inside click.
           std::cout << "Col: " << col + 1 << std::endl;
@@ -61,14 +63,10 @@ void GameScreen::Draw() {
   if (mBoard.mBoard->size() < 1) {
     DrawAllTiles("tile_hidden");
   } else {
-      DrawRevealedBoard();
+    DrawRevealedBoard();
   }
   mData->mWindow.display();
 };
-
-int GameScreen::GetIndex(int col, int row) {
-  return (row * mData->mGameGlobals.mCols) + col;
-}
 
 void GameScreen::DrawAllTiles(std::string texture) {
   for (int col = 0; col < mData->mGameGlobals.mCols; col++) {
@@ -147,28 +145,21 @@ void GameScreen::DrawRevealedBoard() {
   }
 }
 
-void GameScreen::SetAllSprites() {
-  mDebug.setTexture(mData->mAssetManager.GetTexture("debug"));
-  mDigits.setTexture(mData->mAssetManager.GetTexture("digits"));
-  mFaceHappy.setTexture(mData->mAssetManager.GetTexture("face_happy"));
-  mFaceLose.setTexture(mData->mAssetManager.GetTexture("face_lose"));
-  mFaceWin.setTexture(mData->mAssetManager.GetTexture("face_win"));
-  mFlag.setTexture(mData->mAssetManager.GetTexture("flag"));
-  mLeaderboard.setTexture(mData->mAssetManager.GetTexture("leaderboard"));
-  mMine.setTexture(mData->mAssetManager.GetTexture("mine"));
-  mNumber1.setTexture(mData->mAssetManager.GetTexture("number_1"));
-  mNumber2.setTexture(mData->mAssetManager.GetTexture("number_2"));
-  mNumber3.setTexture(mData->mAssetManager.GetTexture("number_3"));
-  mNumber4.setTexture(mData->mAssetManager.GetTexture("number_4"));
-  mNumber5.setTexture(mData->mAssetManager.GetTexture("number_5"));
-  mNumber6.setTexture(mData->mAssetManager.GetTexture("number_6"));
-  mNumber7.setTexture(mData->mAssetManager.GetTexture("number_7"));
-  mNumber8.setTexture(mData->mAssetManager.GetTexture("number_8"));
-  mPause.setTexture(mData->mAssetManager.GetTexture("pause"));
-  mPlay.setTexture(mData->mAssetManager.GetTexture("play"));
-  mTileHidden.setTexture(mData->mAssetManager.GetTexture("tile_hidden"));
-  mTileRevealed.setTexture(mData->mAssetManager.GetTexture("tile_revealed"));
-};
+void GameScreen::DrawControls() {
+  sf::Sprite face;
+  sf::Sprite debug;
+  sf::Sprite play_pause;
+  sf::Sprite leaderboard;
+}
 
 void GameScreen::Pause(){};
 void GameScreen::Resume(){};
+
+int GameScreen::GetIndex(int col, int row) {
+  return (row * mData->mGameGlobals.mCols) + col;
+}
+
+void GameScreen::SetConstantSprites() {
+  mDebug.setTexture(mData->mAssetManager.GetTexture("debug"));
+  mLeaderboard.setTexture(mData->mAssetManager.GetTexture("leaderboard"));
+};

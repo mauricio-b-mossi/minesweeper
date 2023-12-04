@@ -24,4 +24,6 @@ public:
 
 private:
   GameDataRef mData = std::make_shared<GameData>();
+  void LoadAssets();
+  void LoadConfigurations();
 };

@@ -138,6 +138,7 @@ Board::Board(int cols, int rows, int mines)
     : mCols(cols), mRows(rows), mMines(mines),
       mBackingBoard(new bool[rows * cols]) {}
 
+// Works for reset.
 void Board::Init(int clickedCol, int clickedRow) {
   enum Position {
     TOP = (1 << 0),
@@ -154,58 +155,39 @@ void Board::Init(int clickedCol, int clickedRow) {
     mBackingBoard[i] = false;
   }
 
-  std::cout << "backingBoard built" << std::endl;
-
   std::vector<int> shuffler;
   shuffler.reserve(mRows * mCols);
-
-  std::cout << "shuffler built" << std::endl;
 
   // Populating shuffler.
   for (int i = 0; i < (mRows * mCols); i++) {
     shuffler.push_back(i);
-    std::cout << shuffler.back() << std::endl;
   }
-
-  std::cout << "shuffler size: " << shuffler.size() << std::endl;
-  std::cout << "shuffler filled" << std::endl;
 
   // obtain a time-based seed:
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::default_random_engine e(seed);
 
-  std::cout << "time seeded" << std::endl;
-
   std::shuffle(shuffler.begin(), shuffler.end(), e);
-
-  std::cout << "shuffler shuffled" << std::endl;
 
   int counter = 0;
 
   while (counter < mMines) {
 
-    std::cout << "counter: " << counter << std::endl;
-    std::cout << "shuffler size: " << shuffler.size() << std::endl;
-    std::cout << "shuffler first: " << shuffler.front() << std::endl;
-    std::cout << "shuffler last: " << shuffler.back() << std::endl;
-
     if (shuffler.back() != clickedIdx) {
-      std::cout << "filled mBacking with: " << shuffler.back() << std::endl;
       mBackingBoard[shuffler.back()] = true;
       shuffler.pop_back();
       counter++;
     } else {
-      std::cout << "discarded: " << shuffler.back() << std::endl;
       shuffler.pop_back();
     }
   }
 
-  std::cout << "mines built" << std::endl;
-
+  // Deleting vector.
+  if (!mBoard->empty()) {
+    mBoard->erase(mBoard->begin(), mBoard->end());
+  }
   // Filled backingBoard, construct mBoard.
   mBoard->reserve(mRows * mCols);
-
-  std::cout << "mBoard reserve" << std::endl;
 
   for (int idx = 0; idx < (mRows * mCols); idx++) {
     int positionAccumulator = 0;

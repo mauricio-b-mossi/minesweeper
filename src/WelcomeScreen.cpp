@@ -67,8 +67,6 @@ void WelcomeScreen::ProcessEvent() {
 
         if (event.text.unicode > 64 && event.text.unicode < 91 ||
             event.text.unicode > 96 && event.text.unicode < 123) {
-          std::cout << static_cast<char>(event.text.unicode) << ": "
-                    << event.text.unicode << std::endl;
           if (mPlayerName.length() < 10) {
             if (mPlayerName.length() == 0) {
               mPlayerName.push_back(toupper(event.text.unicode));
@@ -76,11 +74,9 @@ void WelcomeScreen::ProcessEvent() {
               mPlayerName.push_back(tolower(event.text.unicode));
           }
         } else if (event.text.unicode == 8) {
-          std::cout << "BackSpace" << std::endl;
           if (mPlayerName.length() > 0)
             mPlayerName.pop_back();
         } else if (event.text.unicode == 13) {
-          std::cout << "CR" << std::endl;
           if (mPlayerName.length() > 0) {
             ExtrasRef extras(new std::vector<std::string>);
             extras->emplace_back(mPlayerName);
