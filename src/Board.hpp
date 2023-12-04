@@ -19,10 +19,13 @@ struct Board {
   // Set mines, set board, finish initializing cells.board
   void Init(int clickedCol, int clickedRow);
 
+  bool HasWon() { return (*mOpenedCells == (mRows * mCols - mMines)); }
+
   int mFlaggedCells = 0;
   int mCols;
   int mRows;
   int mMines;
+  bool mHasLost = false;
   // Open: return true if opened, false if bomb, if neighbors
   bool Open(int idx);
   bool Open(int col, int row);

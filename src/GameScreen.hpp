@@ -30,9 +30,11 @@ private:
   void DrawControls();
   int GetIndex(int col, int row);
 
+  enum ControlState { WON = 1, PAUSED = 2 };
+
 private:
   GameDataRef mData;
-  bool mGameStarted = false;
+  bool mGamePlaying = false;
 
   sf::Sprite mDebug;
   sf::Sprite mLeaderboard;

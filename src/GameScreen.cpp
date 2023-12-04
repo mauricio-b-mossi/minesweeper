@@ -17,7 +17,9 @@
 GameScreen::GameScreen(GameDataRef gameDataRef)
     : mData(gameDataRef),
       mBoard(mData->mGameGlobals.mCols, mData->mGameGlobals.mRows,
-             mData->mGameGlobals.mMines){};
+             mData->mGameGlobals.mMines) {
+  SetConstantSprites();
+};
 
 void GameScreen::Init(){};
 
@@ -44,12 +46,17 @@ void GameScreen::ProcessEvent() {
           std::cout << "Clicked outside" << std::endl;
 
         } else {
+
           // Handle inside click.
           std::cout << "Col: " << col + 1 << std::endl;
           std::cout << "Row: " << row + 1 << std::endl;
           int idx = (row * mData->mGameGlobals.mCols) + col;
           std::cout << "Position: " << idx << std::endl;
-          mBoard.Init(col, row);
+
+          if (mBoard.mBoard->size() < 1) {
+            mBoard.Init(col, row);
+            mGamePlaying = true;
+          }
         }
       }
     }
@@ -65,6 +72,7 @@ void GameScreen::Draw() {
   } else {
     DrawRevealedBoard();
   }
+  DrawControls();
   mData->mWindow.display();
 };
 
@@ -147,9 +155,31 @@ void GameScreen::DrawRevealedBoard() {
 
 void GameScreen::DrawControls() {
   sf::Sprite face;
-  sf::Sprite debug;
   sf::Sprite play_pause;
-  sf::Sprite leaderboard;
+  if (mBoard.HasWon())
+    face.setTexture(mData->mAssetManager.GetTexture("face_win"));
+  else if (mBoard.mHasLost)
+    face.setTexture(mData->mAssetManager.GetTexture("face_lose"));
+  else
+    face.setTexture(mData->mAssetManager.GetTexture("face_happy"));
+
+  if (mGamePlaying)
+    play_pause.setTexture(mData->mAssetManager.GetTexture("play"));
+  else
+    play_pause.setTexture(mData->mAssetManager.GetTexture("pause"));
+
+  face.setPosition((mData->mGameGlobals.mCols / 2.f * 32) - 32,
+                   32 * (mData->mGameGlobals.mRows + 0.5));
+
+  play_pause.setPosition((mData->mGameGlobals.mCols * 32) - 240,
+                         32 * (mData->mGameGlobals.mRows + 0.5));
+
+  mData->mWindow.draw(face);
+  mData->mWindow.draw(play_pause);
+  mData->mWindow.draw(mDebug);
+  mData->mWindow.draw(mLeaderboard);
+
+  // Conditionals to determine face.
 }
 
 void GameScreen::Pause(){};
@@ -162,4 +192,8 @@ int GameScreen::GetIndex(int col, int row) {
 void GameScreen::SetConstantSprites() {
   mDebug.setTexture(mData->mAssetManager.GetTexture("debug"));
   mLeaderboard.setTexture(mData->mAssetManager.GetTexture("leaderboard"));
+  mDebug.setPosition((mData->mGameGlobals.mCols * 32) - 304,
+                     32 * (mData->mGameGlobals.mRows + 0.5));
+  mLeaderboard.setPosition((mData->mGameGlobals.mCols * 32) - 176,
+                           32 * (mData->mGameGlobals.mRows + 0.5));
 };
