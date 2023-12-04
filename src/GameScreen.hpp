@@ -34,9 +34,24 @@ private:
 
 private:
   GameDataRef mData;
-  bool mGamePlaying = false;
+  bool mIsPlaying = false;
+  bool mIsDebugging = false;
 
-  sf::Sprite mDebug;
+  // Pos for ease of event handling since buttons are 64 x 64.
+  int mXposDebug;
+  int mYposDebug;
+
+  int mXposPlayPause;
+  int mYposPlayPause;
+
+  int mXposLeaderboard;
+  int mYposLeaderboard;
+
+  int mXposFace;
+  int mYposFace;
+
+  int mYactionRow;
+
   sf::Sprite mLeaderboard;
   std::string mPlayerName;
 

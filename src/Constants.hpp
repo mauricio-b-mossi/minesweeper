@@ -5,6 +5,7 @@
 #define H2 20
 #define P 18
 #define SQUARE 32
+#define BUTTON 64
 
 //String Constants
 #define TITLE "Minesweeper"
@@ -32,3 +33,5 @@
 #define PLAY "./files/images/play.png"
 #define TILE_HIDDEN "./files/images/tile_hidden.png"
 #define TILE_REVEALED "./files/images/tile_revealed.png"
+#define CLOSE_EYES "./files/images/close-eyes.png"
+#define OPEN_EYES "./files/images/open-eyes.png"

@@ -282,3 +282,10 @@ void Board::PushCellsToBoard(int idx, int *neighborIndices,
                          neighborIndicesVector, mOpenedCells.get(),
                          mBoard.get()));
 }
+
+void Board::Erase() {
+  *mOpenedCells = 0;
+  std::cout << "Enter erase" << std::endl;
+  mBoard->erase(mBoard->begin(), mBoard->end());
+  std::cout << "Board erased. " << mBoard->size() << std::endl;
+}

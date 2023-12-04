@@ -18,6 +18,21 @@ GameScreen::GameScreen(GameDataRef gameDataRef)
     : mData(gameDataRef),
       mBoard(mData->mGameGlobals.mCols, mData->mGameGlobals.mRows,
              mData->mGameGlobals.mMines) {
+
+  mXposDebug = (mData->mGameGlobals.mCols * 32) - 304;
+  mYposDebug = 32 * (mData->mGameGlobals.mRows + 0.5);
+
+  mXposPlayPause = (mData->mGameGlobals.mCols * 32) - 240;
+  mYposPlayPause = 32 * (mData->mGameGlobals.mRows + 0.5);
+
+  mXposLeaderboard = (mData->mGameGlobals.mCols * 32) - 176;
+  mYposLeaderboard = 32 * (mData->mGameGlobals.mRows + 0.5);
+
+  mXposFace = (mData->mGameGlobals.mCols / 2.f * 32) - 32;
+  mYposFace = 32 * (mData->mGameGlobals.mRows + 0.5);
+
+  mYactionRow = 32 * (mData->mGameGlobals.mRows + 0.5);
+
   SetConstantSprites();
 };
 
@@ -42,9 +57,24 @@ void GameScreen::ProcessEvent() {
 
         // Handle outside click.
         if ((row + 1) > mData->mGameGlobals.mRows) {
-
-          std::cout << "Clicked outside" << std::endl;
-
+          std::cout << "Clicked Outside Board" << std::endl;
+          // Check if within action row;
+          if (event.mouseButton.y > mYactionRow &&
+              event.mouseButton.y < mYactionRow + 64) {
+            std::cout << "Clicked Action Row" << std::endl;
+            if (event.mouseButton.x > mXposFace &&
+                event.mouseButton.x < mXposFace + 64) {
+              mBoard.Erase();
+            } else if (event.mouseButton.x > mXposPlayPause &&
+                       event.mouseButton.x < mXposPlayPause + 64) {
+              mIsPlaying = !mIsPlaying;
+            } else if (event.mouseButton.x > mXposLeaderboard &&
+                       event.mouseButton.x < mXposLeaderboard + 64) {
+            } else if (event.mouseButton.x > mXposDebug &&
+                       event.mouseButton.x < mXposDebug + 64) {
+              mIsDebugging = !mIsDebugging;
+            }
+          }
         } else {
 
           // Handle inside click.
@@ -54,14 +84,15 @@ void GameScreen::ProcessEvent() {
           std::cout << "Position: " << idx << std::endl;
 
           if (mBoard.mBoard->size() < 1) {
+            std::cout << "INITIALIZING BOARD" << std::endl;
             mBoard.Init(col, row);
-            mGamePlaying = true;
+            mIsPlaying = true;
           }
         }
       }
     }
   }
-};
+}
 
 void GameScreen::Update(){};
 
@@ -70,7 +101,9 @@ void GameScreen::Draw() {
   if (mBoard.mBoard->size() < 1) {
     DrawAllTiles("tile_hidden");
   } else {
-    DrawRevealedBoard();
+    if (mIsDebugging) {
+      DrawOnlyMine();
+    }
   }
   DrawControls();
   mData->mWindow.display();
@@ -90,11 +123,10 @@ void GameScreen::DrawAllTiles(std::string texture) {
 void GameScreen::DrawOnlyMine() {
   for (int col = 0; col < mData->mGameGlobals.mCols; col++) {
     for (int row = 0; row < mData->mGameGlobals.mRows; row++) {
-      sf::Sprite tile_revealed;
-      tile_revealed.setTexture(
-          mData->mAssetManager.GetTexture("tile_revealed"));
-      tile_revealed.setPosition(col * SQUARE, row * SQUARE);
-      mData->mWindow.draw(tile_revealed);
+      sf::Sprite tile_hidden;
+      tile_hidden.setTexture(mData->mAssetManager.GetTexture("tile_hidden"));
+      tile_hidden.setPosition(col * SQUARE, row * SQUARE);
+      mData->mWindow.draw(tile_hidden);
       if (mBoard.mBoard->at(GetIndex(col, row)).mIsMine) {
         sf::Sprite mine;
         mine.setTexture(mData->mAssetManager.GetTexture("mine"));
@@ -156,6 +188,8 @@ void GameScreen::DrawRevealedBoard() {
 void GameScreen::DrawControls() {
   sf::Sprite face;
   sf::Sprite play_pause;
+  sf::Sprite debug;
+
   if (mBoard.HasWon())
     face.setTexture(mData->mAssetManager.GetTexture("face_win"));
   else if (mBoard.mHasLost)
@@ -163,20 +197,27 @@ void GameScreen::DrawControls() {
   else
     face.setTexture(mData->mAssetManager.GetTexture("face_happy"));
 
-  if (mGamePlaying)
+  if (mIsPlaying)
     play_pause.setTexture(mData->mAssetManager.GetTexture("play"));
   else
     play_pause.setTexture(mData->mAssetManager.GetTexture("pause"));
 
-  face.setPosition((mData->mGameGlobals.mCols / 2.f * 32) - 32,
-                   32 * (mData->mGameGlobals.mRows + 0.5));
+  if (mIsDebugging)
+    debug.setTexture(mData->mAssetManager.GetTexture("open-eyes"));
+  else
+    debug.setTexture(mData->mAssetManager.GetTexture("close-eyes"));
 
-  play_pause.setPosition((mData->mGameGlobals.mCols * 32) - 240,
-                         32 * (mData->mGameGlobals.mRows + 0.5));
+  face.setPosition(mXposFace, mYposFace);
+
+  play_pause.setPosition(mXposPlayPause, mYposFace);
+
+  debug.setPosition(mXposDebug, mYposDebug);
+
+
 
   mData->mWindow.draw(face);
   mData->mWindow.draw(play_pause);
-  mData->mWindow.draw(mDebug);
+  mData->mWindow.draw(debug);
   mData->mWindow.draw(mLeaderboard);
 
   // Conditionals to determine face.
@@ -190,10 +231,6 @@ int GameScreen::GetIndex(int col, int row) {
 }
 
 void GameScreen::SetConstantSprites() {
-  mDebug.setTexture(mData->mAssetManager.GetTexture("debug"));
   mLeaderboard.setTexture(mData->mAssetManager.GetTexture("leaderboard"));
-  mDebug.setPosition((mData->mGameGlobals.mCols * 32) - 304,
-                     32 * (mData->mGameGlobals.mRows + 0.5));
-  mLeaderboard.setPosition((mData->mGameGlobals.mCols * 32) - 176,
-                           32 * (mData->mGameGlobals.mRows + 0.5));
+  mLeaderboard.setPosition(mXposLeaderboard, mYposLeaderboard);
 };

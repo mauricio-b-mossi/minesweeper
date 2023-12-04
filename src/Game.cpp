@@ -61,6 +61,8 @@ void Game::LoadAssets() {
   mData->mAssetManager.LoadTexture("play", PLAY);
   mData->mAssetManager.LoadTexture("tile_hidden", TILE_HIDDEN);
   mData->mAssetManager.LoadTexture("tile_revealed", TILE_REVEALED);
+  mData->mAssetManager.LoadTexture("open-eyes", OPEN_EYES);
+  mData->mAssetManager.LoadTexture("close-eyes", CLOSE_EYES);
 }
 
 void Game::LoadConfigurations() {

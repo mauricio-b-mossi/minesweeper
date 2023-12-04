@@ -19,6 +19,8 @@ struct Board {
   // Set mines, set board, finish initializing cells.board
   void Init(int clickedCol, int clickedRow);
 
+  void Erase();
+
   bool HasWon() { return (*mOpenedCells == (mRows * mCols - mMines)); }
 
   int mFlaggedCells = 0;
