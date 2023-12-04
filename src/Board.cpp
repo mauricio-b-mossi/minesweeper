@@ -265,7 +265,6 @@ void Board::Init(int clickedCol, int clickedRow) {
 
   // Opening clicked mine.
   mBoard->at(clickedIdx).Open();
-
 }
 
 void Board::PushCellsToBoard(int idx, int *neighborIndices,
@@ -292,21 +291,25 @@ void Board::Erase() {
   std::cout << "Board erased. " << mBoard->size() << std::endl;
 }
 
-void Board::Open(int clickedCol, int clickedRow) {
+bool Board::Open(int clickedCol, int clickedRow) {
   int clickedIdx = (clickedRow * mCols) + clickedCol;
   if (!mBoard->at(clickedIdx).mIsOpen) {
     if (!mBoard->at(clickedIdx).Open()) {
       mHasLost = true;
+      return false;
     }
   }
+  return true;
 }
 
-void Board::Open(int idx) {
+bool Board::Open(int idx) {
   if (!mBoard->at(idx).mIsOpen) {
     if (!mBoard->at(idx).Open()) {
       mHasLost = true;
+      return false;
     }
   }
+  return true;
 }
 
 void Board::Flag(int clickedCol, int clickedRow) {

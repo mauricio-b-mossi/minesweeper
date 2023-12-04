@@ -1,4 +1,5 @@
-//Configuration Constants
+#pragma once
+// Configuration Constants
 #define CONFIG_PATH "./files/config.cfg"
 #define FONT_PATH "./files/font.ttf"
 #define H1 24
@@ -8,7 +9,7 @@
 #define BUTTON 64
 #define DIGIT 21
 
-//String Constants
+// String Constants
 #define TITLE "Minesweeper"
 #define WELCOME_H1 "WELCOME TO MINESWEEPER!"
 #define WELCOME_H2 "Enter your name:"

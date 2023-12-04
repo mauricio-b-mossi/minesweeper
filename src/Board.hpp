@@ -1,3 +1,4 @@
+#pragma once
 #include "Cell.hpp"
 #include <memory>
 #include <vector>
@@ -29,8 +30,8 @@ struct Board {
   int mMines;
   bool mHasLost = false;
   // Open: return true if opened, false if bomb, if neighbors
-  void Open(int idx);
-  void Open(int clickedCol, int clickedRow);
+  bool Open(int idx);
+  bool Open(int clickedCol, int clickedRow);
 
   void Flag(int idx);
   void Flag(int clickedCol, int clickedRow);

@@ -1,3 +1,4 @@
+#pragma once
 #include "Game.hpp"
 #include "Board.hpp"
 #include "Constants.hpp"
@@ -6,6 +7,7 @@
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/Graphics/Texture.hpp"
 #include "State.hpp"
+#include "Stopwatch.hpp"
 #include <vector>
 
 class GameScreen : public State {
@@ -30,15 +32,16 @@ private:
   void DrawControls();
   void DrawBoardState();
   void DrawCounter();
+  void DrawStopwatch(int offset, int padding, int number);
   bool IsPaused();
   int GetIndex(int col, int row);
-
-  enum ControlState { WON = 1, PAUSED = 2 };
+  void Solve();
 
 private:
   GameDataRef mData;
   bool mIsPlaying = false;
   bool mIsDebugging = false;
+  Stopwatch mStopWatch;
 
   // Pos for ease of event handling since buttons are 64 x 64.
   int mXposDebug;

@@ -1,3 +1,4 @@
+#pragma once
 #include "Game.hpp"
 #include "SFML/Graphics/Text.hpp"
 #include "State.hpp"

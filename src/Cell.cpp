@@ -11,26 +11,25 @@ Cell::Cell(int idx, bool isMine, bool isOpen, int neighborBombs,
       mFlaggedCells(flaggedCells), mBoard(board) {}
 
 bool Cell::Open() {
-  if (mIsMine) {
-    if (mIsMarked)
-      Flag();
-    mIsOpen = true;
-    return false;
-  } else if (mIsOpen) {
-    return true;
-  } else if (mNeighborBombs == 0 && !mIsOpen) {
-    if (mIsMarked)
-      Flag();
-    mIsOpen = true;
-    for (auto i : mNeighborCellsIndices) {
-      if (!(*mBoard).at(i).mIsOpen &&!(*mBoard).at(i).mIsMarked) {
-        (*mBoard).at(i).Open();
+  if (!mIsMarked) {
+    if (mIsMine) {
+      mIsOpen = true;
+      return false;
+    } else if (mIsOpen) {
+      return true;
+    } else if (mNeighborBombs == 0 && !mIsOpen) {
+      mIsOpen = true;
+      for (auto i : mNeighborCellsIndices) {
+        if (!(*mBoard).at(i).mIsOpen && !(*mBoard).at(i).mIsMarked) {
+          (*mBoard).at(i).Open();
+        }
       }
     }
-  }
 
-  mIsOpen = true;
-  *mOpenedCells = *mOpenedCells + 1;
+    mIsOpen = true;
+    *mOpenedCells = *mOpenedCells + 1;
+    return true;
+  }
   return true;
 };
 

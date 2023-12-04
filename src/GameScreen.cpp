@@ -55,6 +55,10 @@ void GameScreen::ProcessEvent() {
     if (event.type == sf::Event::Closed) {
       mData->mWindow.close();
     }
+    // if (event.type == sf::Event::KeyPressed) {
+    // Solve();
+    // mStopWatch.Freeze();
+    //}
     if (event.type == sf::Event::MouseButtonPressed) {
       if (event.mouseButton.button == sf::Mouse::Left) {
         int col = event.mouseButton.x / 32;
@@ -69,11 +73,17 @@ void GameScreen::ProcessEvent() {
             std::cout << "Clicked Action Row" << std::endl;
             if (event.mouseButton.x > mXposFace &&
                 event.mouseButton.x < mXposFace + BUTTON && !IsPaused()) {
+              if (mStopWatch.mIsFreezed) {
+                mStopWatch.mIsFreezed = false;
+              }
+              mStopWatch.Reset();
               mBoard.Erase();
               mBoard.mHasLost = false;
             } else if (event.mouseButton.x > mXposPlayPause &&
-                       event.mouseButton.x < mXposPlayPause + BUTTON) {
+                       event.mouseButton.x < mXposPlayPause + BUTTON &&
+                       mBoard.mBoard->size() > 0) {
               mIsPlaying = !mIsPlaying;
+              mStopWatch.Toggle();
             } else if (event.mouseButton.x > mXposLeaderboard &&
                        event.mouseButton.x < mXposLeaderboard + BUTTON) {
             } else if (event.mouseButton.x > mXposDebug &&
@@ -94,9 +104,16 @@ void GameScreen::ProcessEvent() {
             if (mBoard.mBoard->size() < 1) {
               std::cout << "INITIALIZING BOARD" << std::endl;
               mBoard.Init(col, row);
+              mStopWatch.Start();
               mIsPlaying = true;
             } else {
-              mBoard.Open(col, row);
+              if (mBoard.Open(col, row)) {
+                if (mBoard.HasWon()) {
+                  // Navigate.
+                  mStopWatch.Freeze();
+                }
+              } else
+                mStopWatch.Freeze();
             }
           }
         }
@@ -307,6 +324,11 @@ void GameScreen::DrawControls() {
 
   DrawCounter();
 
+  DrawStopwatch(mData->mGameGlobals.mCols * 32 - 97, 2,
+                mStopWatch.GetMinutes());
+  DrawStopwatch(mData->mGameGlobals.mCols * 32 - 54, 2,
+                mStopWatch.GetSeconds());
+
   mData->mWindow.draw(face);
   mData->mWindow.draw(play_pause);
   mData->mWindow.draw(debug);
@@ -397,3 +419,95 @@ void GameScreen::DrawCounter() {
     mData->mWindow.draw(digit);
   }
 };
+
+void GameScreen::DrawStopwatch(int offset, int padding, int number) {
+
+  sf::Sprite digit;
+  digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+
+  std::string digits = std::to_string(number);
+
+  int paddingZeros = 0;
+
+  if (digits.length() < padding) {
+    paddingZeros = padding - digits.length();
+  }
+
+  // size_t has some weird behavior as a type.
+  for (int i = (0 - paddingZeros); i < (int)(digits.length()); i++) {
+
+    sf::Sprite digit;
+
+    if (i < 0) {
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(0, 0, 21, 32));
+      digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+    } else {
+      switch (digits[i]) {
+      case '0':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(0, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '1':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 1, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '2':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 2, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '3':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 3, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '4':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 4, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '5':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 5, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '6':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 6, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '7':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 7, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '8':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 8, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '9':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 9, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      case '-':
+        digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+        digit.setTextureRect(sf::IntRect(21 * 10, 0, 21, 32));
+        digit.setPosition(offset + ((i + paddingZeros) * DIGIT), mYposDigit);
+        break;
+      }
+    }
+
+    mData->mWindow.draw(digit);
+  }
+};
+
+void GameScreen::Solve() {
+  for (auto &c : (*mBoard.mBoard)) {
+    c.Open();
+  }
+}
