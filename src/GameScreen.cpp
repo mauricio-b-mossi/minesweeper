@@ -3,6 +3,7 @@
 #include "Game.hpp"
 
 #include "SFML/Graphics/Color.hpp"
+#include "SFML/Graphics/Rect.hpp"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -13,6 +14,7 @@
 #include <ctype.h>
 #include <iostream>
 #include <memory>
+#include <string>
 #include <vector>
 
 GameScreen::GameScreen(GameDataRef gameDataRef)
@@ -33,6 +35,8 @@ GameScreen::GameScreen(GameDataRef gameDataRef)
   mYposFace = 32 * (mData->mGameGlobals.mRows + 0.5);
 
   mYactionRow = 32 * (mData->mGameGlobals.mRows + 0.5);
+
+  mYposDigit = mYactionRow + 16;
 
   SetConstantSprites();
 };
@@ -61,19 +65,20 @@ void GameScreen::ProcessEvent() {
           std::cout << "Clicked Outside Board" << std::endl;
           // Check if within action row;
           if (event.mouseButton.y > mYactionRow &&
-              event.mouseButton.y < mYactionRow + 64) {
+              event.mouseButton.y < mYactionRow + BUTTON) {
             std::cout << "Clicked Action Row" << std::endl;
             if (event.mouseButton.x > mXposFace &&
-                event.mouseButton.x < mXposFace + 64 && !IsPaused()) {
+                event.mouseButton.x < mXposFace + BUTTON && !IsPaused()) {
               mBoard.Erase();
               mBoard.mHasLost = false;
             } else if (event.mouseButton.x > mXposPlayPause &&
-                       event.mouseButton.x < mXposPlayPause + 64) {
+                       event.mouseButton.x < mXposPlayPause + BUTTON) {
               mIsPlaying = !mIsPlaying;
             } else if (event.mouseButton.x > mXposLeaderboard &&
-                       event.mouseButton.x < mXposLeaderboard + 64) {
+                       event.mouseButton.x < mXposLeaderboard + BUTTON) {
             } else if (event.mouseButton.x > mXposDebug &&
-                       event.mouseButton.x < mXposDebug + 64 && !IsPaused()) {
+                       event.mouseButton.x < mXposDebug + BUTTON &&
+                       !IsPaused()) {
               mIsDebugging = !mIsDebugging;
             }
           }
@@ -300,6 +305,8 @@ void GameScreen::DrawControls() {
 
   debug.setPosition(mXposDebug, mYposDebug);
 
+  DrawCounter();
+
   mData->mWindow.draw(face);
   mData->mWindow.draw(play_pause);
   mData->mWindow.draw(debug);
@@ -319,3 +326,74 @@ void GameScreen::SetConstantSprites() {
 };
 
 bool GameScreen::IsPaused() { return mBoard.mBoard->size() > 0 && !mIsPlaying; }
+
+void GameScreen::DrawCounter() {
+  sf::Sprite digit;
+  digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+
+  std::string digits = std::to_string(mBoard.mMines - (*mBoard.mFlaggedCells));
+  int offset = 33;
+  if (digits[0] == '-')
+    offset = 12;
+  for (int i = 0; i < digits.length(); i++) {
+    sf::Sprite digit;
+    switch (digits[i]) {
+    case '0':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(0, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '1':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 1, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '2':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 2, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '3':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 3, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '4':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 4, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '5':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 5, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '6':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 6, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '7':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 7, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '8':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 8, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '9':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 9, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    case '-':
+      digit.setTexture(mData->mAssetManager.GetTexture("digits"));
+      digit.setTextureRect(sf::IntRect(21 * 10, 0, 21, 32));
+      digit.setPosition(offset + (i * DIGIT), mYposDigit);
+      break;
+    }
+    mData->mWindow.draw(digit);
+  }
+};

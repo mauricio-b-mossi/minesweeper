@@ -6,6 +6,7 @@
 #define P 18
 #define SQUARE 32
 #define BUTTON 64
+#define DIGIT 21
 
 //String Constants
 #define TITLE "Minesweeper"

@@ -29,6 +29,7 @@ private:
   void DrawRevealedBoard();
   void DrawControls();
   void DrawBoardState();
+  void DrawCounter();
   bool IsPaused();
   int GetIndex(int col, int row);
 
@@ -53,6 +54,8 @@ private:
   int mYposFace;
 
   int mYactionRow;
+
+  int mYposDigit;
 
   sf::Sprite mLeaderboard;
   std::string mPlayerName;
