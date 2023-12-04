@@ -4,6 +4,7 @@
 
 struct Board {
   std::unique_ptr<int> mOpenedCells{new int{0}};
+  std::unique_ptr<int> mFlaggedCells{new int{0}};
   std::unique_ptr<std::vector<Cell>> mBoard{new std::vector<Cell>{}};
   std::unique_ptr<bool[]> mBackingBoard;
 
@@ -23,16 +24,16 @@ struct Board {
 
   bool HasWon() { return (*mOpenedCells == (mRows * mCols - mMines)); }
 
-  int mFlaggedCells = 0;
   int mCols;
   int mRows;
   int mMines;
   bool mHasLost = false;
   // Open: return true if opened, false if bomb, if neighbors
-  bool Open(int idx);
-  bool Open(int col, int row);
+  void Open(int idx);
+  void Open(int clickedCol, int clickedRow);
+
   void Flag(int idx);
-  void Flag(int col, int row);
+  void Flag(int clickedCol, int clickedRow);
 
 private:
   void PushCellsToBoard(int idx, int *neighborIndices, int neightbors);

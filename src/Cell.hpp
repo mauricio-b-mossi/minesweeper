@@ -7,11 +7,15 @@ struct Cell {
 
   // Board and opened cells are just for recursion purposes.
   Cell(int idx, bool isMine, bool isOpen, int neighborBombs,
-       std::vector<int> NeighborCells, int *openedCells,
+       std::vector<int> NeighborCells, int *openedCells, int *flaggedCells,
        std::vector<Cell> *board);
   // Usefull for drawing.
+  //
+  bool Open();
+  void Flag();
 
   int *mOpenedCells;
+  int *mFlaggedCells;
   std::vector<Cell> *mBoard;
   std::vector<int> mNeighborCellsIndices;
   int mNeighborBombs;

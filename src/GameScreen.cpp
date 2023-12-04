@@ -65,6 +65,7 @@ void GameScreen::ProcessEvent() {
             if (event.mouseButton.x > mXposFace &&
                 event.mouseButton.x < mXposFace + 64) {
               mBoard.Erase();
+              mBoard.mHasLost = false;
             } else if (event.mouseButton.x > mXposPlayPause &&
                        event.mouseButton.x < mXposPlayPause + 64) {
               mIsPlaying = !mIsPlaying;
@@ -87,6 +88,8 @@ void GameScreen::ProcessEvent() {
             std::cout << "INITIALIZING BOARD" << std::endl;
             mBoard.Init(col, row);
             mIsPlaying = true;
+          } else {
+              mBoard.Open(col, row);
           }
         }
       }
@@ -104,7 +107,7 @@ void GameScreen::Draw() {
     if (mIsDebugging) {
       DrawOnlyMine();
     } else {
-        DrawBoardState();
+      DrawBoardState();
     }
   }
   DrawControls();
