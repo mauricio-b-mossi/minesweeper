@@ -8,6 +8,7 @@
 #include "SFML/System/Vector2.hpp"
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/Keyboard.hpp"
+#include "SFML/Window/Mouse.hpp"
 #include "State.hpp"
 #include <ctype.h>
 #include <iostream>
@@ -89,8 +90,18 @@ void GameScreen::ProcessEvent() {
             mBoard.Init(col, row);
             mIsPlaying = true;
           } else {
-              mBoard.Open(col, row);
+            mBoard.Open(col, row);
           }
+        }
+      } else if (event.mouseButton.button == sf::Mouse::Right) {
+
+        std::cout << "Right clicked" << std::endl;
+
+        int col = event.mouseButton.x / 32;
+        int row = event.mouseButton.y / 32;
+
+        if (row < mData->mGameGlobals.mRows && mBoard.mBoard->size() > 0) {
+          mBoard.Flag(col, row);
         }
       }
     }

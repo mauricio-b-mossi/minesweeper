@@ -35,4 +35,5 @@ void Cell::Flag() {
   } else {
     *mFlaggedCells = *mFlaggedCells + 1;
   }
+  mIsMarked = !mIsMarked;
 }
