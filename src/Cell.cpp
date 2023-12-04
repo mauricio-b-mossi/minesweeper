@@ -12,13 +12,18 @@ Cell::Cell(int idx, bool isMine, bool isOpen, int neighborBombs,
 
 bool Cell::Open() {
   if (mIsMine) {
+    if (mIsMarked)
+      Flag();
+    mIsOpen = true;
     return false;
   } else if (mIsOpen) {
     return true;
   } else if (mNeighborBombs == 0 && !mIsOpen) {
+    if (mIsMarked)
+      Flag();
     mIsOpen = true;
     for (auto i : mNeighborCellsIndices) {
-      if (!(*mBoard).at(i).mIsOpen) {
+      if (!(*mBoard).at(i).mIsOpen &&!(*mBoard).at(i).mIsMarked) {
         (*mBoard).at(i).Open();
       }
     }
@@ -30,10 +35,12 @@ bool Cell::Open() {
 };
 
 void Cell::Flag() {
-  if (mIsMarked) {
-    *mFlaggedCells = *mFlaggedCells - 1;
-  } else {
-    *mFlaggedCells = *mFlaggedCells + 1;
+  if (!mIsOpen) {
+    if (mIsMarked) {
+      *mFlaggedCells = *mFlaggedCells - 1;
+    } else {
+      *mFlaggedCells = *mFlaggedCells + 1;
+    }
+    mIsMarked = !mIsMarked;
   }
-  mIsMarked = !mIsMarked;
 }

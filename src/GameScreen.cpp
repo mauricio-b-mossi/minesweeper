@@ -85,12 +85,14 @@ void GameScreen::ProcessEvent() {
           int idx = (row * mData->mGameGlobals.mCols) + col;
           std::cout << "Position: " << idx << std::endl;
 
-          if (mBoard.mBoard->size() < 1) {
-            std::cout << "INITIALIZING BOARD" << std::endl;
-            mBoard.Init(col, row);
-            mIsPlaying = true;
-          } else {
-            mBoard.Open(col, row);
+          if (!mBoard.mHasLost) {
+            if (mBoard.mBoard->size() < 1) {
+              std::cout << "INITIALIZING BOARD" << std::endl;
+              mBoard.Init(col, row);
+              mIsPlaying = true;
+            } else {
+              mBoard.Open(col, row);
+            }
           }
         }
       } else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -100,7 +102,8 @@ void GameScreen::ProcessEvent() {
         int col = event.mouseButton.x / 32;
         int row = event.mouseButton.y / 32;
 
-        if (row < mData->mGameGlobals.mRows && mBoard.mBoard->size() > 0) {
+        if (row < mData->mGameGlobals.mRows && mBoard.mBoard->size() > 0 &&
+            !mBoard.mHasLost) {
           mBoard.Flag(col, row);
         }
       }
