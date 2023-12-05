@@ -1,5 +1,5 @@
 00:00,Default
+00:01,Hola
 00:02,Default
 00:03,Elmortiz
-07:01,Alex
-09:04,Bruce
+00:11,Hola
