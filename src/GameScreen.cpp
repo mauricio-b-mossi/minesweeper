@@ -55,10 +55,14 @@ void GameScreen::ProcessEvent() {
     if (event.type == sf::Event::Closed) {
       mData->mWindow.close();
     }
-    // if (event.type == sf::Event::KeyPressed) {
-    // Solve();
-    // mStopWatch.Freeze();
-    //}
+    if (mData->mGameGlobals.mDebug) {
+      if (event.type == sf::Event::KeyPressed) {
+        if (!mStopWatch.mIsFreezed && mBoard.mBoard->size() > 0) {
+          Solve();
+          mStopWatch.Freeze();
+        }
+      }
+    }
     if (event.type == sf::Event::MouseButtonPressed) {
       if (event.mouseButton.button == sf::Mouse::Left) {
         int col = event.mouseButton.x / 32;
@@ -140,15 +144,17 @@ void GameScreen::Draw() {
   if (mBoard.mBoard->size() < 1) {
     DrawAllTiles("tile_hidden");
   } else {
-    if (!mIsPlaying && mBoard.mBoard->size() > 0) {
+    if (mBoard.HasWon()) {
+      DrawBoardState(true);
+    } else if (!mIsPlaying && mBoard.mBoard->size() > 0) {
       DrawAllTiles("tile_revealed");
     } else if (mIsDebugging) {
       DrawOnlyMine();
     } else {
-      DrawBoardState();
+      DrawBoardState(false);
     }
   }
-  DrawControls();
+  DrawControls(mData->mGameGlobals.mCustom);
   mData->mWindow.display();
 };
 
@@ -163,7 +169,7 @@ void GameScreen::DrawAllTiles(std::string texture) {
   }
 }
 
-void GameScreen::DrawBoardState() {
+void GameScreen::DrawBoardState(bool flags) {
   for (int col = 0; col < mData->mGameGlobals.mCols; col++) {
     for (int row = 0; row < mData->mGameGlobals.mRows; row++) {
 
@@ -176,10 +182,13 @@ void GameScreen::DrawBoardState() {
         mData->mWindow.draw(tile_revealed);
 
         if (mBoard.mBoard->at(GetIndex(col, row)).mIsMine) {
-          sf::Sprite mine;
-          mine.setTexture(mData->mAssetManager.GetTexture("mine"));
-          mine.setPosition(col * SQUARE, row * SQUARE);
-          mData->mWindow.draw(mine);
+          sf::Sprite flagOrMine;
+          if (flags) {
+            flagOrMine.setTexture(mData->mAssetManager.GetTexture("flag"));
+          } else
+            flagOrMine.setTexture(mData->mAssetManager.GetTexture("mine"));
+          flagOrMine.setPosition(col * SQUARE, row * SQUARE);
+          mData->mWindow.draw(flagOrMine);
 
         } else if (mBoard.mBoard->at(GetIndex(col, row)).mNeighborBombs != 0) {
           sf::Sprite number;
@@ -294,7 +303,7 @@ void GameScreen::DrawRevealedBoard() {
   }
 }
 
-void GameScreen::DrawControls() {
+void GameScreen::DrawControls(bool custom) {
   sf::Sprite face;
   sf::Sprite play_pause;
   sf::Sprite debug;
@@ -311,10 +320,14 @@ void GameScreen::DrawControls() {
   else
     play_pause.setTexture(mData->mAssetManager.GetTexture("pause"));
 
-  if (mIsDebugging)
-    debug.setTexture(mData->mAssetManager.GetTexture("open-eyes"));
-  else
-    debug.setTexture(mData->mAssetManager.GetTexture("close-eyes"));
+  if (custom) {
+    if (mIsDebugging)
+      debug.setTexture(mData->mAssetManager.GetTexture("open-eyes"));
+    else
+      debug.setTexture(mData->mAssetManager.GetTexture("close-eyes"));
+  } else {
+    debug.setTexture(mData->mAssetManager.GetTexture("debug"));
+  }
 
   face.setPosition(mXposFace, mYposFace);
 

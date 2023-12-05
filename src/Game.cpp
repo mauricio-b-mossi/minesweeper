@@ -4,9 +4,9 @@
 #include <string>
 
 #include "Constants.hpp"
+#include "GameScreen.hpp"
 #include "StateManager.hpp"
 #include "WelcomeScreen.hpp"
-#include "GameScreen.hpp"
 
 #include "SFML/Window/Event.hpp"
 #include "SFML/Window/VideoMode.hpp"
@@ -36,6 +36,24 @@ void Game::Run() {
   }
 }
 
+Game::Game(bool runCustom, bool runDebug) {
+
+  LoadConfigurations();
+
+  mData->mGameGlobals.mCustom = runCustom;
+  mData->mGameGlobals.mDebug = runDebug;
+
+  mData->mWindow.create(sf::VideoMode(SQUARE * mData->mGameGlobals.mCols,
+                                      SQUARE * mData->mGameGlobals.mRows + 100),
+                        TITLE);
+
+  LoadAssets();
+
+  mData->mStateManager.PushState(StateRef(new GameScreen(mData)), false);
+
+  Run();
+}
+
 void Game::LoadAssets() {
   // Loading Font.
   mData->mAssetManager.LoadFont("font", FONT_PATH);
@@ -61,10 +79,13 @@ void Game::LoadAssets() {
   mData->mAssetManager.LoadTexture("play", PLAY);
   mData->mAssetManager.LoadTexture("tile_hidden", TILE_HIDDEN);
   mData->mAssetManager.LoadTexture("tile_revealed", TILE_REVEALED);
-  mData->mAssetManager.LoadTexture("open-eyes", OPEN_EYES);
-  mData->mAssetManager.LoadTexture("close-eyes", CLOSE_EYES);
+  if (mData->mGameGlobals.mCustom) {
+    mData->mAssetManager.LoadTexture("open-eyes", OPEN_EYES);
+    mData->mAssetManager.LoadTexture("close-eyes", CLOSE_EYES);
+  }
 }
 
+// Sets Globals.
 void Game::LoadConfigurations() {
   // Read Data set window size.
   std::ifstream f(CONFIG_PATH);

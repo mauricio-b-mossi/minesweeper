@@ -2,6 +2,7 @@
 // Configuration Constants
 #define CONFIG_PATH "./files/config.cfg"
 #define FONT_PATH "./files/font.ttf"
+#define LEADERBOARD_PATH "./files/leaderboard.txt"
 #define H1 24
 #define H2 20
 #define P 18

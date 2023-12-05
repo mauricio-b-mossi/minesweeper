@@ -1,10 +1,10 @@
 #pragma once
 #include "AssetManager.hpp"
+#include "GameGlobals.hpp"
 #include "SFML/Graphics/RenderWindow.hpp"
 #include "StateManager.hpp"
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include "GameGlobals.hpp"
 
 struct GameData {
   // AssetManager and StateManager and StateGlobals.
@@ -20,6 +20,7 @@ typedef std::shared_ptr<GameData> GameDataRef;
 class Game {
 public:
   Game();
+  Game(bool runCustom, bool runDebug);
   void Run();
 
 private:

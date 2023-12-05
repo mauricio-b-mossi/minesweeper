@@ -29,8 +29,8 @@ private:
   void DrawAllTiles(std::string texture);
   void DrawOnlyMine();
   void DrawRevealedBoard();
-  void DrawControls();
-  void DrawBoardState();
+  void DrawControls(bool custom);
+  void DrawBoardState(bool flags);
   void DrawCounter();
   void DrawStopwatch(int offset, int padding, int number);
   bool IsPaused();
