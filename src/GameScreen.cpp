@@ -178,13 +178,13 @@ void GameScreen::Draw() {
 
   DrawControls(mData->mGameGlobals.mCustom);
 
-  if (!mIsFocused) {
-    std::cout << "Not focused" << std::endl;
-    sf::RectangleShape rect(
-        sf::Vector2f(mData->mWindow.getSize().x, mData->mWindow.getSize().y));
-    rect.setFillColor(sf::Color(0, 0, 0, 200));
-    mData->mWindow.draw(rect);
-  }
+  //if (!mIsFocused) {
+    //std::cout << "Not focused" << std::endl;
+    //sf::RectangleShape rect(
+        //sf::Vector2f(mData->mWindow.getSize().x, mData->mWindow.getSize().y));
+    //rect.setFillColor(sf::Color(0, 0, 0, 200));
+    //mData->mWindow.draw(rect);
+  //}
 
   mData->mWindow.display();
 };

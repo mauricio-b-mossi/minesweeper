@@ -1,7 +1,7 @@
 #pragma once
 #include "Game.hpp"
-#include "State.hpp"
 #include "Leaderboard.hpp"
+#include "State.hpp"
 
 // Basically on creation read file. Set score, clicks should cloade the
 // leader board.
@@ -21,9 +21,16 @@ public:
 
   void Pause() override;
   void Resume() override;
+
 private:
   GameDataRef mData;
   LeaderBoard mLeaderboard;
   bool mHasWon;
-
+  const float mHeight;
+  const float mWidth;
+  const float mOffsetX;
+  const float mOffsetY;
+  sf::Text mLeaderboardText;
+  std::string ZeroPad(int number, int requiredDigits);
+  int mTimeStamp;
 };
