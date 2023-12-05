@@ -31,6 +31,7 @@ private:
   void DrawRevealedBoard();
   void DrawControls(bool custom);
   void DrawBoardState(bool flags);
+  void DrawBoardStateWithAllMinesShown();
   void DrawCounter();
   void DrawStopwatch(int offset, int padding, int number);
   bool IsPaused();

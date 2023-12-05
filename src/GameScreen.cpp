@@ -90,7 +90,7 @@ void GameScreen::ProcessEvent() {
               mBoard.mHasLost = false;
             } else if (event.mouseButton.x > mXposPlayPause &&
                        event.mouseButton.x < mXposPlayPause + BUTTON &&
-                       mBoard.mBoard->size() > 0) {
+                       mBoard.mBoard->size() > 0 && !mBoard.mHasLost) {
               mIsPlaying = !mIsPlaying;
               mStopWatch.Toggle();
             } else if (event.mouseButton.x > mXposLeaderboard &&
@@ -167,6 +167,8 @@ void GameScreen::Draw() {
   } else {
     if (mBoard.HasWon()) {
       DrawBoardState(true);
+    } else if (mBoard.mHasLost) {
+      DrawBoardStateWithAllMinesShown();
     } else if (!mIsPlaying && mBoard.mBoard->size() > 0) {
       DrawAllTiles("tile_revealed");
     } else if (mIsDebugging) {
@@ -177,14 +179,6 @@ void GameScreen::Draw() {
   }
 
   DrawControls(mData->mGameGlobals.mCustom);
-
-  //if (!mIsFocused) {
-    //std::cout << "Not focused" << std::endl;
-    //sf::RectangleShape rect(
-        //sf::Vector2f(mData->mWindow.getSize().x, mData->mWindow.getSize().y));
-    //rect.setFillColor(sf::Color(0, 0, 0, 200));
-    //mData->mWindow.draw(rect);
-  //}
 
   mData->mWindow.display();
 };
@@ -281,6 +275,65 @@ void GameScreen::DrawOnlyMine() {
         mine.setTexture(mData->mAssetManager.GetTexture("mine"));
         mine.setPosition(col * SQUARE, row * SQUARE);
         mData->mWindow.draw(mine);
+      }
+    }
+  }
+}
+
+void GameScreen::DrawBoardStateWithAllMinesShown() {
+  for (int col = 0; col < mData->mGameGlobals.mCols; col++) {
+    for (int row = 0; row < mData->mGameGlobals.mRows; row++) {
+      if (mBoard.mBoard->at(GetIndex(col, row)).mIsMine ||
+          mBoard.mBoard->at(GetIndex(col, row)).mIsOpen) {
+
+        sf::Sprite tile_revealed;
+        tile_revealed.setTexture(
+            mData->mAssetManager.GetTexture("tile_revealed"));
+        tile_revealed.setPosition(col * SQUARE, row * SQUARE);
+        mData->mWindow.draw(tile_revealed);
+
+        if (mBoard.mBoard->at(GetIndex(col, row)).mIsMine) {
+          sf::Sprite mine;
+          mine.setTexture(mData->mAssetManager.GetTexture("mine"));
+          mine.setPosition(col * SQUARE, row * SQUARE);
+          mData->mWindow.draw(mine);
+        } else if (mBoard.mBoard->at(GetIndex(col, row)).mNeighborBombs != 0) {
+          sf::Sprite number;
+          switch (mBoard.mBoard->at(GetIndex(col, row)).mNeighborBombs) {
+          case 1:
+            number.setTexture(mData->mAssetManager.GetTexture("number_1"));
+            break;
+          case 2:
+            number.setTexture(mData->mAssetManager.GetTexture("number_2"));
+            break;
+          case 3:
+            number.setTexture(mData->mAssetManager.GetTexture("number_3"));
+            break;
+          case 4:
+            number.setTexture(mData->mAssetManager.GetTexture("number_4"));
+            break;
+          case 5:
+            number.setTexture(mData->mAssetManager.GetTexture("number_5"));
+            break;
+          case 6:
+            number.setTexture(mData->mAssetManager.GetTexture("number_6"));
+            break;
+          case 7:
+            number.setTexture(mData->mAssetManager.GetTexture("number_7"));
+            break;
+          case 8:
+            number.setTexture(mData->mAssetManager.GetTexture("number_8"));
+            break;
+          }
+          number.setPosition(col * SQUARE, row * SQUARE);
+          mData->mWindow.draw(number);
+        }
+      } else {
+        sf::Sprite tile_hidden;
+        tile_hidden.setTexture(
+            mData->mAssetManager.GetTexture("tile_hidden"));
+        tile_hidden.setPosition(col * SQUARE, row * SQUARE);
+        mData->mWindow.draw(tile_hidden);
       }
     }
   }
