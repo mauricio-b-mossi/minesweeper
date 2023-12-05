@@ -78,10 +78,12 @@ void WelcomeScreen::ProcessEvent() {
             mPlayerName.pop_back();
         } else if (event.text.unicode == 13) {
           if (mPlayerName.length() > 0) {
-            ExtrasRef extras(new std::vector<std::string>);
-            extras->emplace_back(mPlayerName);
+            // Not necessary to send via extras since mPlayerName is a global
+            // property. Each session has a mPlayerName, hence it is global not just
+            // a throw away. It is used in GameScreen, and LeaderBoardScreen.
+            mData->mGameGlobals.mPlayerName = mPlayerName;
             mData->mStateManager.PushState(StateRef(new GameScreen(mData)),
-                                           true, std::move(extras));
+                                           true);
           }
         }
       }

@@ -41,6 +41,7 @@ private:
   GameDataRef mData;
   bool mIsPlaying = false;
   bool mIsDebugging = false;
+  bool mIsFocused = true;
   Stopwatch mStopWatch;
 
   // Pos for ease of event handling since buttons are 64 x 64.
@@ -61,7 +62,8 @@ private:
   int mYposDigit;
 
   sf::Sprite mLeaderboard;
-  std::string mPlayerName;
+  // mPlayerName is a Global property of Game.
+  //  std::string mPlayerName;
 
   Board mBoard;
 };

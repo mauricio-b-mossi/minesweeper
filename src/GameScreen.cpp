@@ -2,8 +2,10 @@
 #include "Constants.hpp"
 #include "Game.hpp"
 
+#include "LeaderboardScreen.hpp"
 #include "SFML/Graphics/Color.hpp"
 #include "SFML/Graphics/Rect.hpp"
+#include "SFML/Graphics/RectangleShape.hpp"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Text.hpp"
 #include "SFML/System/Vector2.hpp"
@@ -15,6 +17,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 GameScreen::GameScreen(GameDataRef gameDataRef)
@@ -43,11 +46,7 @@ GameScreen::GameScreen(GameDataRef gameDataRef)
 
 void GameScreen::Init(){};
 
-void GameScreen::Init(ExtrasRef extrasRef) {
-  if (extrasRef->size() > 0) {
-    mPlayerName = extrasRef->at(0);
-  }
-};
+void GameScreen::Init(ExtrasRef extrasRef){};
 
 void GameScreen::ProcessEvent() {
   sf::Event event;
@@ -60,6 +59,12 @@ void GameScreen::ProcessEvent() {
         if (!mStopWatch.mIsFreezed && mBoard.mBoard->size() > 0) {
           Solve();
           mStopWatch.Freeze();
+          ExtrasRef extrasRef(new std::vector<std::string>{});
+          extrasRef->emplace_back(std::to_string(mStopWatch.GetTimeStamp()));
+          mData->mStateManager.PushState(StateRef(new LeaderboardScreen(mData)),
+                                         false, std::move(extrasRef));
+          // Add a flag to indicate leaderboard.
+          mIsFocused = false;
         }
       }
     }
@@ -90,6 +95,15 @@ void GameScreen::ProcessEvent() {
               mStopWatch.Toggle();
             } else if (event.mouseButton.x > mXposLeaderboard &&
                        event.mouseButton.x < mXposLeaderboard + BUTTON) {
+
+              if (mIsPlaying) {
+                mStopWatch.Toggle();
+              }
+              mIsPlaying = false;
+              mData->mStateManager.PushState(
+                  StateRef(new LeaderboardScreen(mData)), false);
+              mIsFocused = false;
+
             } else if (event.mouseButton.x > mXposDebug &&
                        event.mouseButton.x < mXposDebug + BUTTON &&
                        !IsPaused()) {
@@ -115,6 +129,13 @@ void GameScreen::ProcessEvent() {
                 if (mBoard.HasWon()) {
                   // Navigate.
                   mStopWatch.Freeze();
+                  ExtrasRef extrasRef(new std::vector<std::string>{});
+                  extrasRef->emplace_back(
+                      std::to_string(mStopWatch.GetTimeStamp()));
+                  mData->mStateManager.PushState(
+                      StateRef(new LeaderboardScreen(mData)), false,
+                      std::move(extrasRef));
+                  mIsFocused = false;
                 }
               } else
                 mStopWatch.Freeze();
@@ -154,7 +175,17 @@ void GameScreen::Draw() {
       DrawBoardState(false);
     }
   }
+
   DrawControls(mData->mGameGlobals.mCustom);
+
+  if (!mIsFocused) {
+    std::cout << "Not focused" << std::endl;
+    sf::RectangleShape rect(
+        sf::Vector2f(mData->mWindow.getSize().x, mData->mWindow.getSize().y));
+    rect.setFillColor(sf::Color(0, 0, 0, 200));
+    mData->mWindow.draw(rect);
+  }
+
   mData->mWindow.display();
 };
 
@@ -349,7 +380,15 @@ void GameScreen::DrawControls(bool custom) {
 }
 
 void GameScreen::Pause(){};
-void GameScreen::Resume(){};
+void GameScreen::Resume() {
+  mIsFocused = true;
+  if (!mIsPlaying) {
+    mIsPlaying = true;
+  }
+  // Toggle if Frozen wont do anything. The only way to unfreeze is to
+  // restart.
+  mStopWatch.Toggle();
+};
 
 int GameScreen::GetIndex(int col, int row) {
   return (row * mData->mGameGlobals.mCols) + col;

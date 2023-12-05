@@ -1,6 +1,7 @@
 #include "LeaderboardScreen.hpp"
 #include "Constants.hpp"
 #include "Game.hpp"
+#include "SFML/Window/Event.hpp"
 #include "State.hpp"
 #include <fstream>
 #include <iostream>
@@ -9,21 +10,22 @@
 LeaderboardScreen::LeaderboardScreen(GameDataRef gameDataRef)
     : mData(gameDataRef), mLeaderboard(5){};
 
-// If Extras, they consist of (*extrasRef)[0] == name && (*extrasRef)[1] ==
-// timeStamp;
+// If Extras, extrasRef->at(0) constists of the timeStampSeconds.
+// the name of the player is a GlobalProperty of the Game, hence it
+// is stored in mData->GameGlobals.mPlayerName.
 void LeaderboardScreen::Init(ExtrasRef extrasRef) {
 
-  if ((*extrasRef).size() < 2) {
-    std::cout << "Error LeaderboardScreen: Insuficient Extras Called. Pass "
-                 "Name as ExtrasRef[0] and TimeStamp as Extras[1]."
+  if (extrasRef->size() < 1) {
+    std::cout << "Error LeaderboardScreen: Insuficient Extras Provided. Pass "
+                 "timeStampSeconds as extrasRef->at(0)."
               << std::endl;
     return Init();
   }
 
   mHasWon = true;
 
-  mLeaderboard.Insert(
-      LeaderBoardEntry((*extrasRef)[1], std::stoi((*extrasRef)[1])));
+  mLeaderboard.Insert(LeaderBoardEntry(mData->mGameGlobals.mPlayerName,
+                                       std::stoi(extrasRef->at(0))));
 
   std::ifstream f("LEADERBOARD_PATH");
   if (!f.is_open()) {
@@ -91,3 +93,22 @@ LeaderboardScreen::~LeaderboardScreen() {
     }
   }
 }
+
+void LeaderboardScreen::ProcessEvent() {
+  sf::Event event;
+  while (mData->mWindow.pollEvent(event)) {
+    if (event.type == sf::Event::Closed) {
+      mData->mWindow.close();
+    }
+    if (event.type == sf::Event::MouseButtonPressed) {
+      mData->mStateManager.PopState();
+    }
+  }
+}
+
+void LeaderboardScreen::Draw() {}
+
+void LeaderboardScreen::Update() {}
+
+void LeaderboardScreen::Pause(){}
+void LeaderboardScreen::Resume(){}
