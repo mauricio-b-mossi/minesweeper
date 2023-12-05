@@ -22,7 +22,7 @@ Game::Game() {
 
   LoadAssets();
 
-  mData->mStateManager.PushState(StateRef(new GameScreen(mData)), false);
+  mData->mStateManager.PushState(StateRef(new WelcomeScreen(mData)), false);
 
   Run();
 }
@@ -49,7 +49,7 @@ Game::Game(bool runCustom, bool runDebug) {
 
   LoadAssets();
 
-  mData->mStateManager.PushState(StateRef(new GameScreen(mData)), false);
+  mData->mStateManager.PushState(StateRef(new WelcomeScreen(mData)), false);
 
   Run();
 }
